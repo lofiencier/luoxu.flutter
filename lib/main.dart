@@ -29,12 +29,21 @@ class App extends StatelessWidget {
 class Layout extends StatelessWidget {
   String title;
   Widget child;
-  Layout({Widget this.child, String this.title});
+  Layout({this.child, this.title });
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: new AppBar(title: new Text(title ?? 'default title')),
+      appBar: title == 'Searching' ? null : new AppBar(
+        title: new Text(title ?? 'default title'),
+      ),
       body: child,
+      floatingActionButton: title != 'Searching' ? FloatingActionButton(
+        child: Icon(Icons.search),
+        onPressed: () => Navigator.of(context).pushNamed('/searching'),
+      ): FloatingActionButton(
+        child: Icon(Icons.arrow_back),
+        onPressed: () => Navigator.of(context).pushNamed('/'),
+      ),
     );
   }
 }
@@ -45,18 +54,79 @@ class Playing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: null,
+      child: Center(
+        child: Column(
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(top: 40),
+              child: ClipOval(
+              child: Container(
+                padding: EdgeInsets.all(40),
+                color: Colors.black,
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage('https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=355294600,364125621&fm=26&gp=0.jpg'),
+                  backgroundColor: Colors.brown.shade800,
+                  radius: 120,
+                  child: Icon(Icons.play_circle_filled, size: 70, color: Colors.white,),
+                  foregroundColor: Colors.black,
+                ),
+              ),
+            ),
+            ),
+            Container(margin: EdgeInsets.only(top: 30),),
+            Text('Imagine Dragons', style: TextStyle(fontSize: 20),),
+            Text('Radioactive', style: TextStyle(color: Colors.grey),),
+            Text('10/21', style: TextStyle(color: Colors.grey)),
+            ControlBar()
+          ],
+        ),
+      ),
     );
   }
 }
-
+class ControlBar extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    return Padding(
+      padding:const EdgeInsets.fromLTRB(40,40,40,80), 
+      child: Column(
+        children: <Widget>[
+            LinearProgressIndicator(
+              value: .1,
+              valueColor: AlwaysStoppedAnimation(Colors.red),
+              backgroundColor: Colors.grey,
+            ),
+            ControlBarButtons(),
+        ],
+      ),
+    );
+  }
+}
+class ControlBarButtons extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Padding(
+      padding: EdgeInsets.only(top: 30),
+      child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Icon(Icons.shuffle),
+        Icon(Icons.fast_rewind),
+        Icon(Icons.play_circle_filled, size: 50, color: Colors.red,),
+        Icon(Icons.fast_forward),
+        Icon(Icons.file_download)
+      ],
+    ),
+    );
+  }
+}
 class Favorite extends StatelessWidget {
   const Favorite({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Playlist(
-        data: new List<Map>.filled(20, {'title': '1', 'subTitle': '2'}));
+    return Playlist(data: new List<Map>.filled(20, {'title': '1', 'subTitle': '2'}));
   }
 }
 
@@ -66,7 +136,28 @@ class Searching extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: null,
+      padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
+      color: Colors.blue,
+      child: Column(
+        children: [
+          Card(
+            child: TextField(
+              maxLines: 1,
+              decoration:InputDecoration(
+                contentPadding: const EdgeInsets.only(left: 10),
+                hintText: 'JACKPOT!!'
+              ),
+            ),
+          ),
+          Expanded(
+            child: Card(
+              child: ListView(
+                children: new List<int>.filled(20, 1).map((item) => ListTile(title: Text('1'),)).toList(),
+              ),
+            ),
+          ),
+        ],
+      )
     );
   }
 }
@@ -84,6 +175,7 @@ class Playlist extends StatelessWidget {
                 children: [
                   ListTile(
                     title: Text('${item['title']}'),
+                    focusColor: Colors.red,
                     contentPadding:
                         const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
                     subtitle: Text('${item['subTitle']}'),
@@ -99,6 +191,7 @@ class Playlist extends StatelessWidget {
                         ),
                       ),
                     ),
+                    onTap: () => Navigator.of(context).pushNamed('/playing'),
                     trailing: Icon(Icons.add),
                     // ?这里怎么显示两个icon？
                   ),
