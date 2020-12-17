@@ -41,7 +41,7 @@ class Playing extends ChangeNotifier {
   void playSong(id) async {
     isPlaying = true;
     songId = id;
-    final data = await Api.getMusicInfo(id, requestHeaders);
+    final data = await Api.getSongUrl(id, requestHeaders);
     print(data);
   }
 
@@ -53,7 +53,7 @@ class Playing extends ChangeNotifier {
       final String cookie = headers['set-cookie'];
       final tokenString = new RegExp(r"kw_token=\w+;").stringMatch(cookie);
       final _token = tokenString.replaceAll(new RegExp(r"[(kw_token=);]"), '');
-      print('token:: $token');
+      print('token:: $_token');
       token = _token;
       requestHeaders = {
         'Referer': 'http://www.kuwo.cn/',

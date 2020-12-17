@@ -11,8 +11,8 @@ class Api {
       'http://player.kuwo.cn/webmusic/sj/dtflagdate?flag=6&rid=MUSIC_${encoded(songId)}';
   static String getLyric(String songId) =>
       'http://mobile.kuwo.cn/mpage/html5/songinfoandlrc?mid=${encoded(songId)}&flag=0';
-  static Future getMusicInfo(String songId, Map headers) => get(
-      'http://www.kuwo.cn/api/www/music/musicInfo?mid=${encoded(songId)}',
+  static Future getSongUrl(String songId, Map headers) => get(
+      'http://ts.tempmusic.tk/url/kw/${encoded(songId)}/128',
       headers);
   static Future getToken() => get('http://www.kuwo.cn');
 
@@ -25,7 +25,7 @@ class Api {
           ? data.headers
           : convert.jsonDecode(data.body);
     } catch (err) {
-      print('fetch error:: err');
+      print('fetch error:: $err');
       return null;
     }
   }
