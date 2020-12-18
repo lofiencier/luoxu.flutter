@@ -1,6 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 import '../service/index.dart' show Api;
+import 'package:flutter/material.dart';
 
 class Searching extends ChangeNotifier {
   Set searchList = new Set();
@@ -38,12 +39,21 @@ class Playing extends ChangeNotifier {
   String token;
   Map<String, String> requestHeaders;
   @override
-  void playSong(id) async {
+  void playSong(id, context) async {
     isPlaying = true;
     songId = id;
-    final data = await Api.getSongUrl(id, requestHeaders);
-    print(data);
+    // final data = await Api.getSongUrl(id, requestHeaders);
+    // print(data);
+    Navigator.of(context).pushNamed('/playing');
+    notifyListeners();
   }
+
+  void togglePlaying() {
+    isPlaying = !isPlaying;
+    notifyListeners();
+  }
+
+  void playSongWithIndex() {}
 
   void initToken() async {
     try {

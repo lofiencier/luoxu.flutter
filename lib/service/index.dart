@@ -11,9 +11,8 @@ class Api {
       'http://player.kuwo.cn/webmusic/sj/dtflagdate?flag=6&rid=MUSIC_${encoded(songId)}';
   static String getLyric(String songId) =>
       'http://mobile.kuwo.cn/mpage/html5/songinfoandlrc?mid=${encoded(songId)}&flag=0';
-  static Future getSongUrl(String songId, Map headers) => get(
-      'http://ts.tempmusic.tk/url/kw/${encoded(songId)}/128',
-      headers);
+  static Future getSongUrl(String songId, Map headers) =>
+      get('http://ts.tempmusic.tk/url/kw/${encoded(songId)}/128k', headers);
   static Future getToken() => get('http://www.kuwo.cn');
 
   static Future get(String url, [Map headers]) async {
