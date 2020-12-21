@@ -24,27 +24,33 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<models.Playing>(context, listen: false).initToken();
-    });
-  }
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+  //     Provider.of<models.Playing>(context, listen: false).initToken();
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '大棉裤骑士',
       routes: {
-        '/': (context) => Layout(child: Favorite(), title: 'Favorite'),
+        '/': (context) => Layout(
+              child: Favorite(),
+              title: 'Favorite',
+              hasTab: true,
+            ),
         '/searching': (context) => Layout(
               child: Searching(),
               title: 'Searching',
+              hasTab: false,
             ),
         '/playing': (context) => Layout(
               child: Playing(),
               title: 'Playing',
+              hasTab: false,
             ),
       },
     );

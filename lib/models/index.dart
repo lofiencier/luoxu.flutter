@@ -23,27 +23,44 @@ class Searching extends ChangeNotifier {
   void _search(keyword) async {
     var data = await Api.search(keyword);
     searchList = new Set();
-    searchList.addAll(data['abslist']);
+    searchList.addAll(data['list']);
     notifyListeners();
   }
 }
 
-class Playlist extends ChangeNotifier {}
+abstract class ListClass {
+  Set list = new Set();
+  void addToList(Map song, context) {
+    Navigator.of(context).pushNamed('/playing');
+  }
+}
+
+class Playlist extends ChangeNotifier with ListClass {
+  @override
+  void addToList(Map song, context) {
+    // TODO: implement addToList
+    super.addToList(song, context);
+    list.add(song);
+    notifyListeners();
+  }
+}
 
 class Playing extends ChangeNotifier {
   bool isPlaying = false;
-  String songId;
+  int songId;
   String posterUrl;
   String lyric;
   Map songInfo;
   String token;
   Map<String, String> requestHeaders;
   @override
-  void playSong(id, context) async {
+  void playSong(Map song, context) async {
     isPlaying = true;
-    songId = id;
-    // final data = await Api.getSongUrl(id, requestHeaders);
-    // print(data);
+    songId = song['id'];
+    final data = await Api.getSongUrl(songId);
+    song.addAll({'songUrl': data});
+    songInfo = song;
+    print('playsong:: $data');
     Navigator.of(context).pushNamed('/playing');
     notifyListeners();
   }

@@ -27,14 +27,11 @@ class Searching extends StatelessWidget {
                   child: ListView(
                     children: _store.searchList
                         .map((item) => ListTile(
-                              title: Text(item['SONGNAME']),
-                              subtitle: Text(item['ARTIST']),
+                              title: Text(item['name']),
+                              subtitle: Text(item['artist']),
                               onTap: () => context
                                   .read<models.Playing>()
-                                  .playSong(
-                                      item['MUSICRID'].replaceAll(
-                                          new RegExp(r"MUSIC_"), ''),
-                                      context),
+                                  .playSong(item, context),
                             ))
                         .toList(),
                   ),
