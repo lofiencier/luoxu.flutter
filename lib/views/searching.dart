@@ -31,7 +31,7 @@ class Searching extends StatelessWidget {
                               subtitle: Text(item['artist']),
                               onTap: () => context
                                   .read<models.Playing>()
-                                  .playSong(item, context),
+                                  .addSongToList(item, context, true),
                             ))
                         .toList(),
                   ),

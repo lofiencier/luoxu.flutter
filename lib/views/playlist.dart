@@ -1,35 +1,42 @@
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import '../models/index.dart' as models;
 
 class Playlist extends StatelessWidget {
-  const Playlist({this.data});
-  final List data;
+  Set data;
+  Playlist({this.data});
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: ListView(
-        children: data
-            .map(
-              (item) => Column(
+      child: Container(
+        child: ListView(
+          children: data.map(
+            (item) {
+              final isActive = item == context.watch<models.Playing>().songInfo;
+              return Column(
                 children: [
                   ListTile(
-                    title: Text('${item['title']}'),
+                    title: Text('${item['name']}'),
                     focusColor: Colors.red,
                     contentPadding:
                         const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-                    subtitle: Text('${item['subTitle']}'),
-                    // tileColor: Colors.blue,
-                    leading: Container(
-                      child: ClipOval(
-                        child: Image.network(
-                          'https://t11.baidu.com/it/u1=4079196055&u2=1342350016&fm=76',
-                          fit: BoxFit.cover,
-                          color: Colors.black12,
-                          width: 50,
-                          height: 50,
-                        ),
-                      ),
-                    ),
-                    onTap: () => Navigator.of(context).pushNamed('/playing'),
+                    subtitle: Text('${item['artist']}'),
+                    tileColor: isActive ? Colors.blue[50] : null,
+                    // 403 不给用是嘛
+                    // leading: Container(
+                    //   child: ClipOval(
+                    //     child: Image.network(
+                    //       item['pic'],
+                    //       fit: BoxFit.cover,
+                    //       color: Colors.black12,
+                    //       width: 50,
+                    //       height: 50,
+                    //     ),
+                    //   ),
+                    // ),
+                    onTap: () => context
+                        .read<models.Playing>()
+                        .playSong(item, context, true),
                     trailing: Icon(Icons.add),
                     // ?这里怎么显示两个icon？
                   ),
@@ -38,9 +45,10 @@ class Playlist extends StatelessWidget {
                     indent: 20,
                   )
                 ],
-              ),
-            )
-            .toList(),
+              );
+            },
+          ).toList(),
+        ),
       ),
     );
   }

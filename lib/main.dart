@@ -7,10 +7,15 @@ import 'views/searching.dart' show Searching;
 import 'views/playing.dart' show Playing;
 
 void main() {
+  final Map tabProvider = {
+    'Trial': models.Trial,
+    'Favorite': models.Favorite,
+  };
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => models.Searching()),
-      ChangeNotifierProvider(create: (_) => models.Playlist()),
+      ChangeNotifierProvider(create: (_) => models.Favorite()),
+      ChangeNotifierProvider(create: (_) => models.Trial()),
       ChangeNotifierProvider(create: (_) => models.Playing()),
     ],
     child: App(),
@@ -38,7 +43,6 @@ class _AppState extends State<App> {
       title: '大棉裤骑士',
       routes: {
         '/': (context) => Layout(
-              child: Favorite(),
               title: 'Favorite',
               hasTab: true,
             ),

@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:lecture/main.dart';
+import 'trial.dart' show Trial;
 import 'favorite.dart' show Favorite;
 
 class Layout extends StatelessWidget {
   String title;
   Widget child;
   bool hasTab = false;
-  Layout({this.child, this.title, this.hasTab});
+  Layout({this.child, this.title, this.hasTab, Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-          appBar: title == 'Searching'
+          appBar: title != 'Favorite'
               ? null
               : new AppBar(
                   toolbarHeight: 72,
@@ -33,7 +34,7 @@ class Layout extends StatelessWidget {
                 ),
           body: hasTab
               ? new TabBarView(children: [
-                  Favorite(),
+                  Trial(),
                   Favorite(),
                 ])
               : child,

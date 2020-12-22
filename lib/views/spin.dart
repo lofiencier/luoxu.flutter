@@ -3,7 +3,8 @@ import 'dart:math' as math;
 
 class Spin extends StatefulWidget {
   Widget child;
-  Spin({this.child, Key key}) : super(key: key);
+  bool spinning;
+  Spin({this.child, this.spinning, Key key}) : super(key: key);
 
   @override
   _SpinState createState() => _SpinState();
@@ -15,10 +16,28 @@ class _SpinState extends State<Spin> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
     _controller = new AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
     )..repeat();
+  }
+
+  @override
+  void didUpdateWidget(covariant Spin oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.spinning != widget.spinning) {
+      if (!widget.spinning) {
+        _controller.stop();
+      } else if (widget.spinning) {
+        if (_controller.isCompleted || _controller.isDismissed) {
+          _controller.reset();
+        }
+        _controller.forward();
+        _controller.repeat();
+      }
+    }
   }
 
   @override

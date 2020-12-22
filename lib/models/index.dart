@@ -1,9 +1,10 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 import '../service/index.dart' show Api;
 import 'package:flutter/material.dart';
 
-class Searching extends ChangeNotifier {
+class Searching with ChangeNotifier {
   Set searchList = new Set();
   String query = '';
   void setSearchList() {
@@ -30,12 +31,14 @@ class Searching extends ChangeNotifier {
 
 abstract class ListClass {
   Set list = new Set();
+  Provider playing;
+
   void addToList(Map song, context) {
-    Navigator.of(context).pushNamed('/playing');
+    // Navigator.of(context).pushNamed('/');
   }
 }
 
-class Playlist extends ChangeNotifier with ListClass {
+class Favorite extends ListClass with ChangeNotifier {
   @override
   void addToList(Map song, context) {
     // TODO: implement addToList
@@ -45,7 +48,19 @@ class Playlist extends ChangeNotifier with ListClass {
   }
 }
 
-class Playing extends ChangeNotifier {
+class Trial extends ListClass with ChangeNotifier {
+  @override
+  void addToList(Map song, context) {
+    // TODO: implement addToList
+    super.addToList(song, context);
+    final next = List.from(list);
+    next.insert(0, song);
+    list = next.toSet();
+    notifyListeners();
+  }
+}
+
+class Playing with ChangeNotifier {
   bool isPlaying = false;
   int songId;
   String posterUrl;
@@ -53,16 +68,45 @@ class Playing extends ChangeNotifier {
   Map songInfo;
   String token;
   Map<String, String> requestHeaders;
+  Audio audio;
+
+  void init(String url) async {
+    final _audio = AssetsAudioPlayer();
+    try {
+      await _audio.open(Audio.network(url));
+    } catch (err) {
+      print('music init error::$err');
+    }
+  }
+
   @override
-  void playSong(Map song, context) async {
+  void playSong(song, context, [bool redirect]) async {
     isPlaying = true;
-    songId = song['id'];
-    final data = await Api.getSongUrl(songId);
-    song.addAll({'songUrl': data});
+    songId = song['rid'];
     songInfo = song;
-    print('playsong:: $data');
-    Navigator.of(context).pushNamed('/playing');
+    if (redirect ?? true) {
+      navigateToPlaying(context);
+    }
+    final data = await song['songUrl'] != null
+        ? song['songUrl']
+        : Api.getSongUrl(song['rid']);
+    song.addAll({'songUrl': data});
+    init(data);
     notifyListeners();
+  }
+
+  void navigateToPlaying(BuildContext context) =>
+      Navigator.of(context).pushNamed('/playing');
+  void addSongToList(Map song, BuildContext context, [bool needToPlay]) {
+    print("songId:: ${song['rid']}");
+    isPlaying = true;
+    songId = song['rid'];
+    songInfo = song;
+    Provider.of<Trial>(context, listen: false).addToList(song, context);
+    notifyListeners();
+    if (needToPlay ?? true) {
+      playSong(song, context, true);
+    }
   }
 
   void togglePlaying() {
