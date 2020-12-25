@@ -20,7 +20,7 @@ class _SpinState extends State<Spin> with TickerProviderStateMixin {
     _controller = new AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
-    )..repeat();
+    );
   }
 
   @override

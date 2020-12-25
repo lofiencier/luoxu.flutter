@@ -22,21 +22,23 @@ class Searching extends StatelessWidget {
                       hintText: 'JACKPOT!!'),
                 ),
               ),
-              Expanded(
-                child: Card(
-                  child: ListView(
-                    children: _store.searchList
-                        .map((item) => ListTile(
-                              title: Text(item['name']),
-                              subtitle: Text(item['artist']),
-                              onTap: () => context
-                                  .read<models.Playing>()
-                                  .addSongToList(item, context, true),
-                            ))
-                        .toList(),
-                  ),
-                ),
-              ),
+              _store.searchList.isNotEmpty
+                  ? Expanded(
+                      child: Card(
+                        child: ListView(
+                          children: _store.searchList
+                              .map((item) => ListTile(
+                                    title: Text(item['name']),
+                                    subtitle: Text(item['artist']),
+                                    onTap: () => context
+                                        .read<models.Playing>()
+                                        .addSongToList(item, context, true),
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                    )
+                  : Container(),
             ],
           ));
     });

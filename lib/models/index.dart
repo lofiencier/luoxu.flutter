@@ -68,28 +68,40 @@ class Playing with ChangeNotifier {
   Map songInfo;
   String token;
   Map<String, String> requestHeaders;
-  Audio audio;
+  AssetsAudioPlayer audio;
+  int tabIndex = 0;
+  Set list;
 
   void init(String url) async {
-    final _audio = AssetsAudioPlayer();
+    final _audio = audio != null ? audio : AssetsAudioPlayer();
+    _audio.playlistAudioFinished.listen(finished);
     try {
       await _audio.open(Audio.network(url));
+      isPlaying = true;
+      _audio.play();
+      notifyListeners();
     } catch (err) {
       print('music init error::$err');
     }
+    audio = _audio;
   }
+
+  void finished(event) {}
 
   @override
   void playSong(song, context, [bool redirect]) async {
-    isPlaying = true;
+    if (isPlaying) {
+      audio?.stop();
+      isPlaying = false;
+      notifyListeners();
+    }
     songId = song['rid'];
     songInfo = song;
     if (redirect ?? true) {
       navigateToPlaying(context);
     }
-    final data = await song['songUrl'] != null
-        ? song['songUrl']
-        : Api.getSongUrl(song['rid']);
+    final data = await Api.getSongUrl(song['rid']);
+
     song.addAll({'songUrl': data});
     init(data);
     notifyListeners();
@@ -109,7 +121,17 @@ class Playing with ChangeNotifier {
     }
   }
 
+  void onTabChange(BuildContext context, int tab) {
+    tabIndex = tab;
+    notifyListeners();
+  }
+
   void togglePlaying() {
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      audio.play();
+    }
     isPlaying = !isPlaying;
     notifyListeners();
   }
