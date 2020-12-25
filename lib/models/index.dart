@@ -40,27 +40,30 @@ abstract class ListClass {
 
 class Favorite extends ListClass with ChangeNotifier {
   @override
-  void addToList(Map song, context) {
+  void addToList(Map song, context, [Function callback]) {
     // TODO: implement addToList
     super.addToList(song, context);
     list.add(song);
+    callback ?? callback(list);
     notifyListeners();
   }
 }
 
 class Trial extends ListClass with ChangeNotifier {
   @override
-  void addToList(Map song, context) {
+  void addToList(Map song, context, [Function callback]) {
     // TODO: implement addToList
     super.addToList(song, context);
     final next = List.from(list);
     next.insert(0, song);
     list = next.toSet();
+    callback ?? callback(list);
     notifyListeners();
   }
 }
 
 class Playing with ChangeNotifier {
+  Playing({this.list});
   bool isPlaying = false;
   int songId;
   String posterUrl;
@@ -74,7 +77,7 @@ class Playing with ChangeNotifier {
 
   void init(String url) async {
     final _audio = audio != null ? audio : AssetsAudioPlayer();
-    _audio.playlistAudioFinished.listen(finished);
+    _audio.playlistAudioFinished.listen(onSongChange);
     try {
       await _audio.open(Audio.network(url));
       isPlaying = true;
@@ -86,10 +89,13 @@ class Playing with ChangeNotifier {
     audio = _audio;
   }
 
-  void finished(event) {}
+  void onSongChange(_, [bool isNext = false]) {
+    final index = list.toList().indexOf(songInfo);
+    playSongWithIndex(index, isNext);
+  }
 
   @override
-  void playSong(song, context, [bool redirect]) async {
+  void playSong(song, [context, bool redirect]) async {
     if (isPlaying) {
       audio?.stop();
       isPlaying = false;
@@ -97,7 +103,7 @@ class Playing with ChangeNotifier {
     }
     songId = song['rid'];
     songInfo = song;
-    if (redirect ?? true) {
+    if (redirect ?? true && context != null) {
       navigateToPlaying(context);
     }
     final data = await Api.getSongUrl(song['rid']);
@@ -114,7 +120,8 @@ class Playing with ChangeNotifier {
     isPlaying = true;
     songId = song['rid'];
     songInfo = song;
-    Provider.of<Trial>(context, listen: false).addToList(song, context);
+    Provider.of<Trial>(context, listen: false)
+        .addToList(song, context, (Set _list) => list = _list);
     notifyListeners();
     if (needToPlay ?? true) {
       playSong(song, context, true);
@@ -127,6 +134,7 @@ class Playing with ChangeNotifier {
   }
 
   void togglePlaying() {
+    print('list::?$list');
     if (isPlaying) {
       audio.pause();
     } else {
@@ -136,7 +144,23 @@ class Playing with ChangeNotifier {
     notifyListeners();
   }
 
-  void playSongWithIndex() {}
+  void playSongWithIndex(int index, [bool isNext = false]) {
+    final List songList = list.toList();
+    final int len = songList.length;
+    index = isNext ? index++ : index--;
+    int indexOverride = index;
+    if (isNext) {
+      if (index >= len) {
+        indexOverride = 0;
+      }
+    } else {
+      if (index < 0) {
+        index = len - 1;
+      }
+    }
+    songInfo = songList[index];
+    playSong(songInfo);
+  }
 
   void initToken() async {
     try {
