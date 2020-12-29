@@ -57,7 +57,9 @@ class Trial extends ListClass with ChangeNotifier {
     final next = List.from(list);
     next.insert(0, song);
     list = next.toSet();
-    callback ?? callback(list);
+    if (callback != null) {
+      callback(list);
+    }
     notifyListeners();
   }
 }
@@ -74,6 +76,7 @@ class Playing with ChangeNotifier {
   AssetsAudioPlayer audio;
   int tabIndex = 0;
   Set list;
+  Duration position;
 
   void init(String url) async {
     final _audio = audio != null ? audio : AssetsAudioPlayer();
@@ -82,6 +85,7 @@ class Playing with ChangeNotifier {
       await _audio.open(Audio.network(url));
       isPlaying = true;
       _audio.play();
+      _audio.current.value.audio.duration;
       notifyListeners();
     } catch (err) {
       print('music init error::$err');
@@ -91,6 +95,7 @@ class Playing with ChangeNotifier {
 
   void onSongChange(_, [bool isNext = false]) {
     final index = list.toList().indexOf(songInfo);
+    print('index::$index');
     playSongWithIndex(index, isNext);
   }
 
@@ -106,10 +111,11 @@ class Playing with ChangeNotifier {
     if (redirect ?? true && context != null) {
       navigateToPlaying(context);
     }
-    final data = await Api.getSongUrl(song['rid']);
-
-    song.addAll({'songUrl': data});
-    init(data);
+    if (song['songUrl'] == null) {
+      final data = await Api.getSongUrl(song['rid']);
+      song.addAll({'songUrl': data});
+      init(data);
+    }
     notifyListeners();
   }
 
@@ -155,10 +161,10 @@ class Playing with ChangeNotifier {
       }
     } else {
       if (index < 0) {
-        index = len - 1;
+        indexOverride = len - 1;
       }
     }
-    songInfo = songList[index];
+    songInfo = songList[indexOverride];
     playSong(songInfo);
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/index.dart' as models;
+import 'ticker.dart' show ProcessBar;
 
 class ControlBar extends StatelessWidget {
   @override
@@ -10,10 +11,8 @@ class ControlBar extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(40, 40, 40, 80),
         child: Column(
           children: <Widget>[
-            LinearProgressIndicator(
-              value: .1,
-              valueColor: AlwaysStoppedAnimation(Colors.red),
-              backgroundColor: Colors.grey,
+            ProcessBar(
+              audio: _store.audio,
             ),
             ControlBarButtons(),
           ],
@@ -44,7 +43,9 @@ class ControlBarButtons extends StatelessWidget {
               iconSize: 50,
               onPressed: _store.togglePlaying,
             ),
-            Icon(Icons.fast_forward),
+            IconButton(
+                icon: Icon(Icons.fast_forward),
+                onPressed: () => _store.onSongChange(null, true)),
             Icon(Icons.file_download)
           ],
         ),
