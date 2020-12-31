@@ -87,6 +87,11 @@ class Favorite extends ListClass with ChangeNotifier {
     notifyListeners();
   }
 
+  void like(song) {
+    list.add(song);
+    notifyListeners();
+  }
+
   void dislike(song) {
     list.remove(song);
     notifyListeners();
@@ -95,6 +100,11 @@ class Favorite extends ListClass with ChangeNotifier {
   void initStorage(List _list) {
     print('list::$_list');
     list = _list.toSet();
+    notifyListeners();
+  }
+
+  void onDelete(song) {
+    list.remove(song);
     notifyListeners();
   }
 }
@@ -111,6 +121,21 @@ class Trial extends ListClass with ChangeNotifier {
       callback(list);
     }
     notifyListeners();
+  }
+
+  void onDelete(song) {
+    list.remove(song);
+    notifyListeners();
+  }
+
+  void toggleLike(context, song) {
+    final favorite = Provider.of<Favorite>(context, listen: false);
+    final bool isFavorite = favorite.list?.contains(song) ?? true;
+    if (isFavorite) {
+      favorite.dislike(song);
+    } else {
+      favorite.like(song);
+    }
   }
 
   void initStorage(List _list) {

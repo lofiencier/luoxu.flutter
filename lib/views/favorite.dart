@@ -9,8 +9,7 @@ class Favorite extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<models.Favorite>(
-        builder: (_, _store, child) => Playlist(
-              data: _store.list,
-            ));
+        builder: (_, _store, child) =>
+            Playlist(data: _store.list, type: 'favorite'));
   }
 }

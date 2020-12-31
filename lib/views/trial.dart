@@ -9,6 +9,10 @@ class Trial extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<models.Trial>(
-        builder: (_, _store, child) => Playlist(data: _store.list));
+        builder: (_, _store, child) => Playlist(
+            data: _store.list,
+            onDelete: _store.onDelete,
+            type: 'trial',
+            toggleLike: _store.toggleLike));
   }
 }

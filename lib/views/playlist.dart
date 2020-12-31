@@ -4,7 +4,11 @@ import '../models/index.dart' as models;
 
 class Playlist extends StatelessWidget {
   Set data;
-  Playlist({this.data});
+  Function onDelete;
+  Function toggleLike;
+  String type = 'trial';
+
+  Playlist({this.data, this.onDelete, this.toggleLike, this.type});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -16,11 +20,11 @@ class Playlist extends StatelessWidget {
               return Column(
                 children: [
                   ListTile(
-                    title: Text('${item['artist']}'),
+                    title: Text('${item['name']}'),
                     focusColor: Colors.red,
                     contentPadding:
                         const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-                    subtitle: Text('${item['name']}'),
+                    subtitle: Text('${item['artist']}'),
                     tileColor: isActive ? Colors.blue[50] : null,
                     // 403 不给用是嘛
                     // leading: Container(
@@ -40,12 +44,23 @@ class Playlist extends StatelessWidget {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                            icon: Icon(Icons.delete_outline), onPressed: null),
-                        IconButton(
-                          icon: Icon(Icons.favorite_outline),
-                          onPressed: null,
-                        ),
+                        type == 'favorite'
+                            ? IconButton(
+                                icon: Icon(Icons.delete_outline),
+                                onPressed: null)
+                            : IconButton(
+                                icon: context
+                                            .watch<models.Favorite>()
+                                            .list
+                                            ?.contains(item) ??
+                                        true
+                                    ? Icon(
+                                        Icons.favorite,
+                                        color: Colors.red,
+                                      )
+                                    : Icon(Icons.favorite_outline),
+                                onPressed: () => toggleLike(context, item),
+                              ),
                       ],
                     ),
                   ),
