@@ -5,12 +5,8 @@ import 'dart:async';
 import 'package:assets_audio_player/assets_audio_player.dart';
 
 class ProcessBar extends StatefulWidget {
-  bool playing;
-  Duration duration;
   AssetsAudioPlayer audio;
-  Duration position;
-  ProcessBar({Key key, this.playing, this.audio, this.duration, this.position})
-      : super(key: key);
+  ProcessBar({Key key, this.audio}) : super(key: key);
 
   @override
   _ProcessBarState createState() => _ProcessBarState();
@@ -44,13 +40,17 @@ class _ProcessBarState extends State<ProcessBar> {
 
   void init() {
     Timer.periodic(const Duration(seconds: 1), (timer) {
-      final double process =
-          widget.audio?.currentPosition.value?.inMilliseconds /
-              widget.audio?.current.value.audio.duration?.inMilliseconds;
-      setState(() {
-        percent = process;
-      });
-      ticker = timer;
+      try {
+        final double process =
+            widget.audio?.currentPosition.value?.inMilliseconds /
+                widget.audio?.current?.value?.audio?.duration?.inMilliseconds;
+        setState(() {
+          percent = process;
+        });
+        ticker = timer;
+      } catch (err) {
+        return null;
+      }
     });
   }
 

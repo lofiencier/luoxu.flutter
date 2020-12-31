@@ -23,8 +23,7 @@ class Playing extends StatelessWidget {
                     child: Spin(
                         spinning: _store.isPlaying,
                         child: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=355294600,364125621&fm=26&gp=0.jpg'),
+                          backgroundImage: NetworkImage(_store.songInfo['pic']),
                           backgroundColor: Colors.brown.shade800,
                           radius: 120,
                           child: _store.isPlaying
@@ -43,11 +42,11 @@ class Playing extends StatelessWidget {
                 margin: EdgeInsets.only(top: 30),
               ),
               Text(
-                _store.songInfo['artist'],
+                _store.songInfo['name'],
                 style: TextStyle(fontSize: 20),
               ),
               Text(
-                _store.songInfo['name'],
+                _store.songInfo['artist'],
                 style: TextStyle(color: Colors.grey),
               ),
               Text('10/21', style: TextStyle(color: Colors.grey)),

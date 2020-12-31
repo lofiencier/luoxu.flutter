@@ -7,10 +7,6 @@ import 'views/searching.dart' show Searching;
 import 'views/playing.dart' show Playing;
 
 void main() {
-  final Map tabProvider = {
-    'Trial': models.Trial,
-    'Favorite': models.Favorite,
-  };
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => models.Searching()),
@@ -29,13 +25,20 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-  //     Provider.of<models.Playing>(context, listen: false).initToken();
-  //   });
-  // }
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<models.Playing>(context, listen: false).initStorage(context);
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    Provider.of<models.Playing>(context, listen: false).disposeAll(context);
+  }
 
   @override
   Widget build(BuildContext context) {

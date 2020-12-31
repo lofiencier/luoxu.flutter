@@ -16,11 +16,11 @@ class Playlist extends StatelessWidget {
               return Column(
                 children: [
                   ListTile(
-                    title: Text('${item['name']}'),
+                    title: Text('${item['artist']}'),
                     focusColor: Colors.red,
                     contentPadding:
                         const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-                    subtitle: Text('${item['artist']}'),
+                    subtitle: Text('${item['name']}'),
                     tileColor: isActive ? Colors.blue[50] : null,
                     // 403 不给用是嘛
                     // leading: Container(
@@ -37,8 +37,17 @@ class Playlist extends StatelessWidget {
                     onTap: () => context
                         .read<models.Playing>()
                         .playSong(item, context, true),
-                    trailing: Icon(Icons.add),
-                    // ?这里怎么显示两个icon？
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                            icon: Icon(Icons.delete_outline), onPressed: null),
+                        IconButton(
+                          icon: Icon(Icons.favorite_outline),
+                          onPressed: null,
+                        ),
+                      ],
+                    ),
                   ),
                   Divider(
                     height: 0,
